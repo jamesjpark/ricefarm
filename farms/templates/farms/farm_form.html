@@ -1,0 +1,71 @@
+{% extends "farms/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div id="map" style="width:100%;height:600px;"></div>
+<p><em>지도를 클릭해주세요!</em></p> 
+<div id="clickLatlng"></div>
+{% for farm in farms %}
+    <h1>{{farm.lat}}</h1>
+    
+{% endfor %}
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0c1c1ecf62b9129e1a3e52d50c6affd9"></script>
+<script>
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(36.9398769229341, 126.92220064373734), // 지도의 중심좌표
+        level: 2, // 지도의 확대 레벨
+        mapTypeId: kakao.maps.MapTypeId. SKYVIEW
+    };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+// 지도를 클릭한 위치에 표출할 마커입니다
+var marker = new kakao.maps.Marker({ 
+    // 지도 중심좌표에 마커를 생성합니다 
+    position: map.getCenter() 
+}); 
+// 지도에 마커를 표시합니다
+marker.setMap(map);
+
+// 지도에 클릭 이벤트를 등록합니다
+// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng; 
+    
+    // 마커 위치를 클릭한 위치로 옮깁니다
+    marker.setPosition(latlng);
+
+    var form = document.getElementById("my-form")
+    form.lat.value = latlng.getLat()
+    form.lng.value = latlng.getLng()
+    
+});
+
+
+</script>
+
+    <div class="content-section">
+            <form id="my-form" method="POST">
+            {% csrf_token %}
+
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">논 추가</legend>
+                    
+    
+    <div id="div_id_row" class="control-group"> <label for="id_row" class="control-label requiredField">
+                    가로<span class="asteriskField">*</span> </label> <div class="controls"> <input type="number" name="row" class="numberinput" required="" id="id_row"> </div> </div> <div id="div_id_col" class="control-group"> <label for="id_col" class="control-label requiredField">
+                    세로<span class="asteriskField">*</span> </label> <div class="controls"> <input type="number" name="col" class="numberinput" required="" id="id_col"> </div> </div> <div id="div_id_lat" class="control-group"> <label for="id_lat" class="control-label requiredField">
+                    위도<span class="asteriskField">*</span> </label> <div class="controls"> <input type="number" name="lat" step="1e-15" class="numberinput" required="" id="id_lat"> </div> </div> <div id="div_id_lng" class="control-group"> <label for="id_lng" class="control-label requiredField">
+                    경도<span class="asteriskField">*</span> </label> <div class="controls"> <input type="number" name="lng" step="1e-15" class="numberinput" required="" id="id_lng"> </div> </div>
+    
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Post</button>
+                </div>
+            </form>
+    </div>
+    
+{% endblock content %}
