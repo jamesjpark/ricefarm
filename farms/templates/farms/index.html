@@ -1,7 +1,6 @@
 {% extends 'farms/base.html' %}
 {% block content %}
 <div id="map" style="width:100%;height:600px;"></div>
-<p><em>지도를 클릭해주세요!</em></p> 
 <div id="clickLatlng"></div>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0c1c1ecf62b9129e1a3e52d50c6affd9"></script>
@@ -15,22 +14,20 @@ var mapContainer = document.getElementById('map'), // 지도를 표시할 div
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-// 지도를 클릭한 위치에 표출할 마커입니다
-
-// 지도에 클릭 이벤트를 등록합니다
-// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
 var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
 var imageSize = new kakao.maps.Size(24, 35); 
+var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
 
 function setMarker(id, row, col, lat, lng){
     var FarmMarker = new kakao.maps.Marker({
         map: map, // 마커를 표시할 지도
         position: new kakao.maps.LatLng(lat, lng), // 마커를 표시할 위치
         title : col + ',' + row + "갯수 : " + col*row, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image : markerImage
     });
-
+    var link = '<a href="kakaomap://look?p=' + lat + ',' + lng + '" style="color:blue">길찾기</a>'
     var infowindow = new kakao.maps.InfoWindow({
-        content: "가로 : " + row + ','+"세로 : " + col +  "<br>갯수 : " + col*row + '<br><a href="post/'+ id +'/delete/" style="color:blue">삭제</a>',
+        content: "가로 : " + row + ','+"세로 : " + col +  "<br>갯수 : " + col*row + '<br>' + link + '<br><a href="post/'+ id +'/delete/" style="color:blue">삭제</a>    ',
         removable : true,
     });
     
@@ -44,12 +41,19 @@ function makeOverListener(map, marker, infowindow) {
 }
 
 
+
 </script>
 {% for farm in farms %}
     <script>
         setMarker('{{farm.id}}','{{farm.row}}','{{farm.col}}','{{farm.lat}}','{{farm.lng}}');
     </script>
 {% endfor %}
+<br>
+<div id = "admin">
+    <button>
+        <a href = "post/">논 추가</a>
+    </button>
+</div>
 {% endblock content %}
 
 
