@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'farms.apps.FarmsConfig',
     'crispy_forms',
+    'gunicorn',
 ]
 
 MIDDLEWARE = [
